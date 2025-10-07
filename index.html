@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Countdown to You ❤️</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: url("Me and Her.png") no-repeat center center/cover;
+      text-align: center;
+      color: #fff;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Start Screen */
+    #start-screen {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 10;
+    }
+    #start-screen h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+    #start-btn {
+      background: #ff4b5c;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      padding: 15px 30px;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: transform 0.2s;
+    }
+    #start-btn:hover {
+      transform: scale(1.1);
+      background: #ff1e40;
+    }
+
+    /* Main Content */
+    #main-content {
+      display: none;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      z-index: 2;
+    }
+
+    /* Countdown Box */
+    #countdown-box {
+      position: relative;
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      padding: 40px 60px;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      z-index: 2;
+    }
+
+    #countdown {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .message {
+      margin-top: 30px;
+      font-size: 1.3rem;
+      z-index: 2;
+    }
+    footer {
+      position: absolute;
+      bottom: 10px;
+      font-size: 0.9rem;
+      opacity: 0.8;
+      z-index: 2;
+    }
+
+    /* Floating Hearts */
+    .heart {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Red_heart_symbol.svg/120px-Red_heart_symbol.svg.png') no-repeat center/contain;
+      animation: floatUp 8s linear infinite;
+      opacity: 0.8;
+    }
+
+    /* Floating Butterflies */
+    .butterfly {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Butterfly_icon.svg/128px-Butterfly_icon.svg.png') no-repeat center/contain;
+      animation: flutter 10s linear infinite;
+      opacity: 0.9;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(100vh) scale(0.5); opacity: 1; }
+      100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+    }
+
+    @keyframes flutter {
+      0% {
+        transform: translateY(100vh) translateX(0) rotate(0deg);
+        opacity: 1;
+      }
+      50% {
+        transform: translateY(50vh) translateX(40px) rotate(15deg);
+      }
+      100% {
+        transform: translateY(-10vh) translateX(-40px) rotate(-15deg);
+        opacity: 0;
+      }
+    }
+
+    /* Static Cliparts around countdown */
+    .clip-heart {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Emoji_u2764.svg/120px-Emoji_u2764.svg.png') no-repeat center/contain;
+      z-index: 3;
+    }
+
+    .top-left { top: -20px; left: -30px; transform: rotate(-20deg); }
+    .top-right { top: -20px; right: -30px; transform: rotate(20deg); }
+    .bottom-left { bottom: -20px; left: -30px; transform: rotate(20deg); }
+    .bottom-right { bottom: -20px; right: -30px; transform: rotate(-20deg); }
+
+  </style>
+</head>
+<body>
+  <!-- Start Screen -->
+  <div id="start-screen">
+    <h1>Hey love 💕 I made something for you</h1>
+    <button id="start-btn">Click on me ❤️</button>
+  </div>
+
+  <!-- Main Content -->
+  <div id="main-content">
+    <h1>Counting down the days until I see you ❤️</h1>
+    <div id="countdown-box">
+      <div class="clip-heart top-left"></div>
+      <div class="clip-heart top-right"></div>
+      <div class="clip-heart bottom-left"></div>
+      <div class="clip-heart bottom-right"></div>
+      <div id="countdown"></div>
+    </div>
+    <div class="message">I can't wait for 18th October, my love! 🥰</div>
+    <footer>Made with love, just for you 💌</footer>
+  </div>
+
+  <script>
+    // Handle start button
+    const startBtn = document.getElementById("start-btn");
+    const startScreen = document.getElementById("start-screen");
+    const mainContent = document.getElementById("main-content");
+
+    startBtn.addEventListener("click", () => {
+      startScreen.style.display = "none";
+      mainContent.style.display = "flex";
+      createFloatingItems();
+    });
+
+    // Countdown logic
+    const meetingDate = new Date("Oct 18, 2025 00:00:00").getTime();
+    const timer = setInterval(function() {
+      const now = new Date().getTime();
+      const distance = meetingDate - now;
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById("countdown").innerHTML =
+        days + " Days " + hours + " Hours " + minutes + " Minutes " + seconds + " Seconds ";
+
+      if (distance < 0) {
+        clearInterval(timer);
+        document.getElementById("countdown").innerHTML = "It's finally time! 💕";
+      }
+    }, 1000);
+
+    // Floating hearts & butterflies
+    function createFloatingItems() {
+      setInterval(() => {
+        const heart = document.createElement("div");
+        heart.classList.add("heart");
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.animationDuration = (5 + Math.random() * 5) + "s"; 
+        document.body.appendChild(heart);
+        setTimeout(() => { heart.remove(); }, 10000);
+      }, 800);
+
+      setInterval(() => {
+        const butterfly = document.createElement("div");
+        butterfly.classList.add("butterfly");
+        butterfly.style.left = Math.random() * 100 + "vw";
+        butterfly.style.animationDuration = (6 + Math.random() * 5) + "s"; 
+        document.body.appendChild(butterfly);
+        setTimeout(() => { butterfly.remove(); }, 12000);
+      }, 1500);
+    }
+  </script>
+</body>
+</html>
